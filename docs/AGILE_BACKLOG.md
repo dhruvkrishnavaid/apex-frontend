@@ -41,7 +41,7 @@ named `Sprint N: ...`. Mobile-first and responsive throughout; permission-aware 
 | 11 | F4 | Reusable form dialog; create/edit product, add/edit variant | Done |
 | 12 | F6 | Create/edit supplier | Done |
 | 13 | F2 | Create user, edit user (role, status), reset password | Done |
-| 14 | F7 | New sales order (customer, warehouse, lines) and customer creation | Planned |
+| 14 | F7 | New sales order (customer, warehouse, lines) and customer creation | Done |
 
 ## Backlog (stories)
 
@@ -58,6 +58,6 @@ named `Sprint N: ...`. Mobile-first and responsive throughout; permission-aware 
 
 ## Next (unscheduled)
 
-- Write flows: create/edit products and variants, create sales and purchase orders, customers, stock transfers, user and role management, reorder rules.
+- Remaining write flows: create purchase orders, customer management page, stock transfers, role management, reorder rules, returns, categories.
 - Warehouses page, reports pages (stock valuation, sales), returns, own-password change.
 - Tests (Vitest + Testing Library) and CI.

@@ -17,6 +17,7 @@ import { Route as AuthenticatedAuditIndexRouteImport } from './routes/_authentic
 import { Route as AuthenticatedInventoryIndexRouteImport } from './routes/_authenticated/inventory/index'
 import { Route as AuthenticatedOrdersIndexRouteImport } from './routes/_authenticated/orders/index'
 import { Route as AuthenticatedOrdersOrderIdRouteImport } from './routes/_authenticated/orders/$orderId'
+import { Route as AuthenticatedOrdersNewRouteImport } from './routes/_authenticated/orders/new'
 import { Route as AuthenticatedProductsIndexRouteImport } from './routes/_authenticated/products/index'
 import { Route as AuthenticatedProductsProductIdRouteImport } from './routes/_authenticated/products/$productId'
 import { Route as AuthenticatedPurchaseOrdersIndexRouteImport } from './routes/_authenticated/purchase-orders/index'
@@ -67,6 +68,11 @@ const AuthenticatedOrdersOrderIdRoute =
     path: '/orders/$orderId',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedOrdersNewRoute = AuthenticatedOrdersNewRouteImport.update({
+  id: '/orders/new',
+  path: '/orders/new',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 const AuthenticatedProductsIndexRoute =
   AuthenticatedProductsIndexRouteImport.update({
     id: '/products/',
@@ -107,6 +113,7 @@ export interface FileRoutesByFullPath {
   '/': typeof AuthenticatedIndexRoute
   '/login': typeof LoginRoute
   '/orders/$orderId': typeof AuthenticatedOrdersOrderIdRoute
+  '/orders/new': typeof AuthenticatedOrdersNewRoute
   '/products/$productId': typeof AuthenticatedProductsProductIdRoute
   '/purchase-orders/$poId': typeof AuthenticatedPurchaseOrdersPoIdRoute
   '/alerts/': typeof AuthenticatedAlertsIndexRoute
@@ -122,6 +129,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/': typeof AuthenticatedIndexRoute
   '/orders/$orderId': typeof AuthenticatedOrdersOrderIdRoute
+  '/orders/new': typeof AuthenticatedOrdersNewRoute
   '/products/$productId': typeof AuthenticatedProductsProductIdRoute
   '/purchase-orders/$poId': typeof AuthenticatedPurchaseOrdersPoIdRoute
   '/alerts': typeof AuthenticatedAlertsIndexRoute
@@ -139,6 +147,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
   '/_authenticated/orders/$orderId': typeof AuthenticatedOrdersOrderIdRoute
+  '/_authenticated/orders/new': typeof AuthenticatedOrdersNewRoute
   '/_authenticated/products/$productId': typeof AuthenticatedProductsProductIdRoute
   '/_authenticated/purchase-orders/$poId': typeof AuthenticatedPurchaseOrdersPoIdRoute
   '/_authenticated/alerts/': typeof AuthenticatedAlertsIndexRoute
@@ -156,6 +165,7 @@ export interface FileRouteTypes {
     | '/'
     | '/login'
     | '/orders/$orderId'
+    | '/orders/new'
     | '/products/$productId'
     | '/purchase-orders/$poId'
     | '/alerts/'
@@ -171,6 +181,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/'
     | '/orders/$orderId'
+    | '/orders/new'
     | '/products/$productId'
     | '/purchase-orders/$poId'
     | '/alerts'
@@ -187,6 +198,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/_authenticated/'
     | '/_authenticated/orders/$orderId'
+    | '/_authenticated/orders/new'
     | '/_authenticated/products/$productId'
     | '/_authenticated/purchase-orders/$poId'
     | '/_authenticated/alerts/'
@@ -262,6 +274,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedOrdersOrderIdRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/orders/new': {
+      id: '/_authenticated/orders/new'
+      path: '/orders/new'
+      fullPath: '/orders/new'
+      preLoaderRoute: typeof AuthenticatedOrdersNewRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/products/': {
       id: '/_authenticated/products/'
       path: '/products'
@@ -310,6 +329,7 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedRouteChildren {
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
   AuthenticatedOrdersOrderIdRoute: typeof AuthenticatedOrdersOrderIdRoute
+  AuthenticatedOrdersNewRoute: typeof AuthenticatedOrdersNewRoute
   AuthenticatedProductsProductIdRoute: typeof AuthenticatedProductsProductIdRoute
   AuthenticatedPurchaseOrdersPoIdRoute: typeof AuthenticatedPurchaseOrdersPoIdRoute
   AuthenticatedAlertsIndexRoute: typeof AuthenticatedAlertsIndexRoute
@@ -325,6 +345,7 @@ interface AuthenticatedRouteChildren {
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
   AuthenticatedOrdersOrderIdRoute: AuthenticatedOrdersOrderIdRoute,
+  AuthenticatedOrdersNewRoute: AuthenticatedOrdersNewRoute,
   AuthenticatedProductsProductIdRoute: AuthenticatedProductsProductIdRoute,
   AuthenticatedPurchaseOrdersPoIdRoute: AuthenticatedPurchaseOrdersPoIdRoute,
   AuthenticatedAlertsIndexRoute: AuthenticatedAlertsIndexRoute,

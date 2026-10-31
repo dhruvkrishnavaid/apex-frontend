@@ -26,5 +26,5 @@ The backend must allow `http://localhost:3000` in `CORS_ALLOWED_ORIGINS`.
 
 ## Delivery
 
-Agile, sprint by sprint: see [docs/AGILE_BACKLOG.md](docs/AGILE_BACKLOG.md). Sprints 0 to 10 are done (foundation, auth,
-app shell, dashboard, products, inventory, alerts, orders, procurement, users/roles, audit log). Create/edit forms are next.
+Agile, sprint by sprint: see [docs/AGILE_BACKLOG.md](docs/AGILE_BACKLOG.md). Sprints 0 to 14 are done (foundation, auth,
+app shell, dashboard, products, inventory, alerts, orders, procurement, users/roles, audit log). Product, supplier, user and sales-order forms are included; see the backlog for what remains.

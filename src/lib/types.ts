@@ -268,3 +268,11 @@ export interface AuditLog {
   ipAddress: string | null
   createdAt: string
 }
+
+export interface Customer {
+  id: string
+  name: string
+  email: string | null
+  phone: string | null
+  isActive: boolean
+}

@@ -1,6 +1,9 @@
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
+import { Plus } from 'lucide-react'
 import { z } from 'zod'
+import { Button } from '@/components/ui/button'
+import { useAuth } from '#/auth'
 import { EmptyState } from '#/components/common/empty-state'
 import { PageHeader } from '#/components/common/page-header'
 import { Pagination } from '#/components/common/pagination'
@@ -25,11 +28,24 @@ export const Route = createFileRoute('/_authenticated/orders/')({
 function OrdersPage() {
   const search = Route.useSearch()
   const navigate = useNavigate({ from: Route.fullPath })
+  const { can } = useAuth()
   const { data, isPending, isError } = useQuery(ordersQuery(search))
 
   return (
     <>
-      <PageHeader title="Orders" description="Sales orders and their fulfilment progress." />
+      <PageHeader
+        title="Orders"
+        description="Sales orders and their fulfilment progress."
+        actions={
+          can('order:create') && (
+            <Button asChild>
+              <Link to="/orders/new">
+                <Plus /> New order
+              </Link>
+            </Button>
+          )
+        }
+      />
       <div className="mb-4">
         <Select value={search.status ?? 'all'} onValueChange={(v) => navigate({ search: { status: v === 'all' ? undefined : v, page: 0 } })}>
           <SelectTrigger className="w-full sm:w-56" aria-label="Filter by status">

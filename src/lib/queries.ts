@@ -1,6 +1,6 @@
 import { keepPreviousData, queryOptions } from '@tanstack/react-query'
 import { api } from './api'
-import type { Alert, AuditLog, Category, Dashboard, Movement, Order, Page, Product, PurchaseOrder, ReplenishmentSuggestion, Role, SalesReport, StockLevel, Supplier, TopProductRow, User, Warehouse } from './types'
+import type { Alert, AuditLog, Category, Customer, Dashboard, Movement, Order, Page, Product, PurchaseOrder, ReplenishmentSuggestion, Role, SalesReport, StockLevel, Supplier, TopProductRow, User, Warehouse } from './types'
 
 const isoDate = (d: Date) => d.toISOString().slice(0, 10)
 
@@ -135,3 +135,8 @@ export const auditLogsQuery = (params: { page: number; method?: string }) =>
     queryFn: () => api.get<Page<AuditLog>>('/audit-logs', { size: 25, sort: 'createdAt,desc', ...params }),
     placeholderData: keepPreviousData,
   })
+
+export const customersQuery = queryOptions({
+  queryKey: ['customers'],
+  queryFn: () => api.get<Page<Customer>>('/customers', { size: 100, sort: 'name,asc' }),
+})
