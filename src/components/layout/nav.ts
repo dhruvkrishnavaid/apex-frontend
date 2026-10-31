@@ -1,4 +1,4 @@
-import { LayoutDashboard, type LucideIcon } from 'lucide-react'
+import { LayoutDashboard, Package, type LucideIcon } from 'lucide-react'
 import type { LinkProps } from '@tanstack/react-router'
 
 export interface NavItem {
@@ -18,5 +18,9 @@ export const navGroups: NavGroup[] = [
   {
     label: 'Overview',
     items: [{ label: 'Dashboard', to: '/', icon: LayoutDashboard }],
+  },
+  {
+    label: 'Catalogue',
+    items: [{ label: 'Products', to: '/products', icon: Package, permissions: ['product:read'] }],
   },
 ]

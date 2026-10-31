@@ -32,7 +32,7 @@ named `Sprint N: ...`. Mobile-first and responsive throughout; permission-aware 
 | 2 | F2 | Login, token storage and refresh, route guards, permission helpers | Done |
 | 3 | F1, F2 | Responsive app shell: sidebar, mobile sheet nav, header, theme toggle, user menu | Done |
 | 4 | F3 | Dashboard KPIs, sales trend, top products, open alerts | Done |
-| 5 | F4 | Products list with search/filter/paging, product detail with variants | Planned |
+| 5 | F4 | Products list with search/filter/paging, product detail with variants | Done |
 | 6 | F5 | Stock levels, movement ledger, adjustments, warehouses | Planned |
 | 7 | F8 | Alerts and replenishment suggestions | Planned |
 | 8 | F7 | Sales orders list/detail and fulfilment actions | Planned |

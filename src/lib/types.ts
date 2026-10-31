@@ -116,8 +116,12 @@ export interface Product {
 
 export interface Category {
   id: string
+  parentId: string | null
   name: string
   slug: string
+  description: string | null
+  isActive: boolean
+  subcategories: Category[]
 }
 
 export interface StockLevel {

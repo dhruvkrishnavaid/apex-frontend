@@ -1,6 +1,6 @@
-import { queryOptions } from '@tanstack/react-query'
+import { keepPreviousData, queryOptions } from '@tanstack/react-query'
 import { api } from './api'
-import type { Alert, Dashboard, Page, SalesReport, TopProductRow } from './types'
+import type { Alert, Category, Dashboard, Page, Product, SalesReport, TopProductRow } from './types'
 
 const isoDate = (d: Date) => d.toISOString().slice(0, 10)
 
@@ -31,4 +31,29 @@ export const openAlertsQuery = (size = 5) =>
   queryOptions({
     queryKey: ['alerts', 'open', size],
     queryFn: () => api.get<Page<Alert>>('/alerts', { status: 'OPEN', size }),
+  })
+
+export const categoriesQuery = queryOptions({
+  queryKey: ['categories'],
+  queryFn: () => api.get<Category[]>('/categories'),
+  staleTime: 5 * 60_000,
+})
+
+export const productsQuery = (params: { page: number; keyword?: string; categoryId?: string }) =>
+  queryOptions({
+    queryKey: ['products', params],
+    queryFn: () =>
+      api.get<Page<Product>>('/products', {
+        page: params.page,
+        size: 20,
+        keyword: params.keyword,
+        categoryId: params.categoryId,
+      }),
+    placeholderData: keepPreviousData,
+  })
+
+export const productQuery = (id: string) =>
+  queryOptions({
+    queryKey: ['products', id],
+    queryFn: () => api.get<Product>(`/products/${id}`),
   })
