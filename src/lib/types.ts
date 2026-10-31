@@ -248,3 +248,23 @@ export interface PurchaseOrder {
   orderedAt: string | null
   createdAt: string
 }
+
+export interface Role {
+  id: string
+  name: string
+  permissions: string[]
+  builtIn: boolean
+  userCount: number
+  createdAt: string
+}
+
+export interface AuditLog {
+  id: string
+  userEmail: string | null
+  method: string
+  path: string
+  resource: string | null
+  statusCode: number
+  ipAddress: string | null
+  createdAt: string
+}

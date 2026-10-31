@@ -1,6 +1,6 @@
 import { keepPreviousData, queryOptions } from '@tanstack/react-query'
 import { api } from './api'
-import type { Alert, Category, Dashboard, Movement, Order, Page, Product, PurchaseOrder, ReplenishmentSuggestion, SalesReport, StockLevel, Supplier, TopProductRow, Warehouse } from './types'
+import type { Alert, AuditLog, Category, Dashboard, Movement, Order, Page, Product, PurchaseOrder, ReplenishmentSuggestion, Role, SalesReport, StockLevel, Supplier, TopProductRow, User, Warehouse } from './types'
 
 const isoDate = (d: Date) => d.toISOString().slice(0, 10)
 
@@ -116,3 +116,22 @@ export const purchaseOrdersQuery = (params: { page: number; status?: string }) =
 
 export const purchaseOrderQuery = (id: string) =>
   queryOptions({ queryKey: ['purchase-orders', id], queryFn: () => api.get<PurchaseOrder>(`/purchase-orders/${id}`) })
+
+export const usersQuery = (page: number) =>
+  queryOptions({
+    queryKey: ['users', page],
+    queryFn: () => api.get<Page<User>>('/users', { size: 20, page }),
+    placeholderData: keepPreviousData,
+  })
+
+export const rolesQuery = queryOptions({
+  queryKey: ['roles'],
+  queryFn: () => api.get<Role[]>('/roles'),
+})
+
+export const auditLogsQuery = (params: { page: number; method?: string }) =>
+  queryOptions({
+    queryKey: ['audit-logs', params],
+    queryFn: () => api.get<Page<AuditLog>>('/audit-logs', { size: 25, sort: 'createdAt,desc', ...params }),
+    placeholderData: keepPreviousData,
+  })

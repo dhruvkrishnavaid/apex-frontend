@@ -37,7 +37,7 @@ named `Sprint N: ...`. Mobile-first and responsive throughout; permission-aware 
 | 7 | F8 | Alerts and replenishment suggestions | Done |
 | 8 | F7 | Sales orders list/detail and fulfilment actions | Done |
 | 9 | F6 | Suppliers and purchase orders | Done |
-| 10 | F2, F8 | Users, roles, audit log | Planned |
+| 10 | F2, F8 | Users, roles, audit log (read-only views) | Done |
 
 ## Backlog (stories)
 
@@ -51,3 +51,9 @@ named `Sprint N: ...`. Mobile-first and responsive throughout; permission-aware 
 - F7: As staff I can follow an order through pick, pack, ship and deliver.
 - F6: As a buyer I can see purchase orders and their receipt progress.
 - F2: As an admin I can manage users and roles; F8: review the audit trail.
+
+## Next (unscheduled)
+
+- Write flows: create/edit products and variants, create sales and purchase orders, customers, stock transfers, user and role management, reorder rules.
+- Warehouses page, reports pages (stock valuation, sales), returns, own-password change.
+- Tests (Vitest + Testing Library) and CI.
