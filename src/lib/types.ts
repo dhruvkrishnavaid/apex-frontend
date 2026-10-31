@@ -315,3 +315,13 @@ export interface ReorderRule {
   reorderQuantity: number
   isActive: boolean
 }
+
+export interface OrderReturn {
+  id: string
+  returnNumber: string
+  reason: string | null
+  restocked: boolean
+  refundAmount: number
+  lines: { orderLineId: string; sku: string; quantity: number; refundAmount: number }[]
+  createdAt: string
+}

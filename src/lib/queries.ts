@@ -1,6 +1,6 @@
 import { keepPreviousData, queryOptions } from '@tanstack/react-query'
 import { api } from './api'
-import type { Alert, AuditLog, Category, Customer, Dashboard, Movement, Order, Page, Product, PurchaseOrder, ReorderRule, ReplenishmentSuggestion, Role, SalesReport, StockLevel, Supplier, TopProductRow, Transfer, User, Warehouse } from './types'
+import type { Alert, AuditLog, Category, Customer, Dashboard, Movement, Order, OrderReturn, Page, Product, PurchaseOrder, ReorderRule, ReplenishmentSuggestion, Role, SalesReport, StockLevel, Supplier, TopProductRow, Transfer, User, Warehouse } from './types'
 
 const isoDate = (d: Date) => d.toISOString().slice(0, 10)
 
@@ -167,3 +167,15 @@ export const reorderRulesQuery = queryOptions({
   queryKey: ['reorder-rules'],
   queryFn: () => api.get<ReorderRule[]>('/reorder-rules'),
 })
+
+export const permissionsQuery = queryOptions({
+  queryKey: ['roles', 'permissions'],
+  queryFn: () => api.get<string[]>('/roles/permissions'),
+  staleTime: 10 * 60_000,
+})
+
+export const orderReturnsQuery = (orderId: string) =>
+  queryOptions({
+    queryKey: ['orders', orderId, 'returns'],
+    queryFn: () => api.get<OrderReturn[]>(`/orders/${orderId}/returns`),
+  })

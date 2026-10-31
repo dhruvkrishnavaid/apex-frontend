@@ -1,12 +1,15 @@
 import { useState } from 'react'
 import { requires } from '#/lib/guards'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { useQuery } from '@tanstack/react-query'
-import { KeyRound, Pencil, Plus } from 'lucide-react'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { KeyRound, Pencil, Plus, Trash2 } from 'lucide-react'
+import { toast } from 'sonner'
+import { RoleDialog } from '#/components/admin/role-dialog'
+import { api } from '#/lib/api'
 import { z } from 'zod'
 import { ResetPasswordDialog, UserDialog } from '#/components/admin/user-dialogs'
 import { Button } from '@/components/ui/button'
-import type { User } from '#/lib/types'
+import type { Role, User } from '#/lib/types'
 import { EmptyState } from '#/components/common/empty-state'
 import { PageHeader } from '#/components/common/page-header'
 import { Pagination } from '#/components/common/pagination'
@@ -32,21 +35,30 @@ function UsersPage() {
   const navigate = useNavigate({ from: Route.fullPath })
   const { can } = useAuth()
   const [creating, setCreating] = useState(false)
+  const [creatingRole, setCreatingRole] = useState(false)
   return (
     <>
       <PageHeader
         title="Users & roles"
         description="Who can sign in and what they are allowed to do."
         actions={
-          search.view === 'users' &&
-          can('user:create') && (
-            <Button onClick={() => setCreating(true)}>
-              <Plus /> New user
-            </Button>
+          search.view === 'users' ? (
+            can('user:create') && (
+              <Button onClick={() => setCreating(true)}>
+                <Plus /> New user
+              </Button>
+            )
+          ) : (
+            can('role:manage') && (
+              <Button onClick={() => setCreatingRole(true)}>
+                <Plus /> New role
+              </Button>
+            )
           )
         }
       />
       <UserDialog open={creating} onOpenChange={setCreating} />
+      <RoleDialog open={creatingRole} onOpenChange={setCreatingRole} />
       <Tabs className="mb-4" value={search.view} onValueChange={(v) => navigate({ search: { view: v as 'users' | 'roles', page: 0 } })}>
         <TabsList>
           <TabsTrigger value="users">Users</TabsTrigger>
@@ -119,29 +131,65 @@ function Users() {
 }
 
 function Roles() {
+  const { can } = useAuth()
+  const queryClient = useQueryClient()
   const { data, isPending, isError } = useQuery(rolesQuery)
+  const [editing, setEditing] = useState<Role | null>(null)
+  const manage = can('role:manage')
+
+  const remove = useMutation({
+    mutationFn: (id: string) => api.delete(`/roles/${id}`),
+    onSuccess: () => {
+      toast.success('Role deleted')
+      queryClient.invalidateQueries({ queryKey: ['roles'] })
+    },
+    onError: (e: Error) => toast.error(e.message),
+  })
+
   if (isError) return <EmptyState title="Could not load roles" />
   if (isPending) return <Skeleton className="h-64 w-full" />
   return (
-    <div className="grid gap-4 md:grid-cols-2">
-      {data.map((r) => (
-        <Card key={r.id} className="p-5">
-          <div className="flex items-center justify-between gap-2">
-            <h2 className="font-semibold">{r.name.replaceAll('_', ' ')}</h2>
-            <span className="text-xs text-muted-foreground">
-              {r.userCount} user{r.userCount === 1 ? '' : 's'}
-              {r.builtIn ? ' · built-in' : ''}
-            </span>
-          </div>
-          <div className="mt-3 flex flex-wrap gap-1.5">
-            {r.permissions.map((p) => (
-              <Badge key={p} variant="outline" className="font-mono text-[11px] font-normal">
-                {p}
-              </Badge>
-            ))}
-          </div>
-        </Card>
-      ))}
-    </div>
+    <>
+      <div className="grid gap-4 md:grid-cols-2">
+        {data.map((r) => (
+          <Card key={r.id} className="p-5">
+            <div className="flex items-center justify-between gap-2">
+              <h2 className="font-semibold">{r.name.replaceAll('_', ' ')}</h2>
+              <div className="flex items-center gap-1">
+                <span className="mr-1 text-xs text-muted-foreground">
+                  {r.userCount} user{r.userCount === 1 ? '' : 's'}
+                  {r.builtIn ? ' · built-in' : ''}
+                </span>
+                {manage && (
+                  <Button variant="ghost" size="icon" className="size-8" aria-label={`Edit ${r.name}`} onClick={() => setEditing(r)}>
+                    <Pencil />
+                  </Button>
+                )}
+                {manage && !r.builtIn && (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="size-8"
+                    aria-label={`Delete ${r.name}`}
+                    disabled={remove.isPending}
+                    onClick={() => confirm(`Delete the role ${r.name}?`) && remove.mutate(r.id)}
+                  >
+                    <Trash2 />
+                  </Button>
+                )}
+              </div>
+            </div>
+            <div className="mt-3 flex flex-wrap gap-1.5">
+              {r.permissions.map((p) => (
+                <Badge key={p} variant="outline" className="font-mono text-[11px] font-normal">
+                  {p}
+                </Badge>
+              ))}
+            </div>
+          </Card>
+        ))}
+      </div>
+      <RoleDialog open={!!editing} onOpenChange={(o) => !o && setEditing(null)} role={editing ?? undefined} />
+    </>
   )
 }

@@ -14,7 +14,8 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { useAuth } from '#/auth'
 import { api } from '#/lib/api'
-import { orderQuery } from '#/lib/queries'
+import { orderQuery, orderReturnsQuery } from '#/lib/queries'
+import { ReturnDialog } from '#/components/sales/return-dialog'
 import { formatCurrency } from '#/lib/format'
 import type { Order } from '#/lib/types'
 
@@ -47,6 +48,9 @@ function OrderDetail({ order }: { order: Order }) {
   const queryClient = useQueryClient()
   const [carrier, setCarrier] = useState('')
   const [tracking, setTracking] = useState('')
+  const [returning, setReturning] = useState(false)
+  const isShipped = ['SHIPPED', 'DELIVERED'].includes(order.status)
+  const { data: returns } = useQuery({ ...orderReturnsQuery(order.id), enabled: isShipped })
 
   const act = useMutation({
     mutationFn: ({ action, body }: { action: string; body?: unknown }) => api.post<Order>(`/orders/${order.id}/${action}`, body),
@@ -96,6 +100,15 @@ function OrderDetail({ order }: { order: Order }) {
         </Card>
       )}
 
+      {isShipped && canUpdate && (
+        <div className="mb-6">
+          <Button variant="outline" onClick={() => setReturning(true)}>
+            Record a return
+          </Button>
+          <ReturnDialog order={order} open={returning} onOpenChange={setReturning} />
+        </div>
+      )}
+
       <Card>
         <CardHeader>
           <CardTitle>Items</CardTitle>
@@ -143,6 +156,29 @@ function OrderDetail({ order }: { order: Order }) {
           )}
         </CardContent>
       </Card>
+      {returns && returns.length > 0 && (
+        <Card className="mt-6">
+          <CardHeader>
+            <CardTitle>Returns</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ul className="divide-y text-sm">
+              {returns.map((r) => (
+                <li key={r.id} className="flex flex-wrap items-center justify-between gap-2 py-2.5">
+                  <div>
+                    <p className="font-mono text-xs font-medium">{r.returnNumber}</p>
+                    <p className="text-muted-foreground">
+                      {r.lines.map((l) => `${l.quantity} × ${l.sku}`).join(', ')} · {r.restocked ? 'restocked' : 'written off'}
+                      {r.reason ? ` · ${r.reason}` : ''}
+                    </p>
+                  </div>
+                  <span className="tabular-nums">Refund {formatCurrency(r.refundAmount)}</span>
+                </li>
+              ))}
+            </ul>
+          </CardContent>
+        </Card>
+      )}
     </>
   )
 }

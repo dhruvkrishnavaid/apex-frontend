@@ -59,7 +59,7 @@ named `Sprint N: ...`. Mobile-first and responsive throughout; permission-aware 
 | 16 | F7, F5 | Customers and warehouses pages (create/edit) | Done |
 | 17 | F6 | Create purchase order; shared variant picker and line editor | Done |
 | 18 | F5, F8 | Stock transfers (create, dispatch, receive, cancel) and reorder rules | Done |
-| 19 | F7, F2 | Returns against orders; role management | Planned |
+| 19 | F7, F2 | Returns against orders; role management | Done |
 
 Smoke test (backend on in-memory H2, admin and a warehouse-staff user): login/logout, restricted dashboard and nav,
 product create, stock and alerts, new order with tax, pick/pack/ship, purchase order submit and partial receipt,
