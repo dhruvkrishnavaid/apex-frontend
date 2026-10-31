@@ -1,4 +1,4 @@
-import { LayoutDashboard, Package, Warehouse, Bell, ShoppingCart, Truck, Factory, Users, ScrollText, type LucideIcon } from 'lucide-react'
+import { LayoutDashboard, Package, Warehouse, Bell, ShoppingCart, Truck, Factory, Users, ScrollText, Contact, Building2, type LucideIcon } from 'lucide-react'
 import type { LinkProps } from '@tanstack/react-router'
 
 export interface NavItem {
@@ -34,7 +34,9 @@ export const navGroups: NavGroup[] = [
     label: 'Operations',
     items: [
       { label: 'Orders', to: '/orders', icon: ShoppingCart, permissions: ['order:read'] },
+      { label: 'Customers', to: '/customers', icon: Contact, permissions: ['customer:read'] },
       { label: 'Inventory', to: '/inventory', icon: Warehouse, permissions: ['inventory:read'] },
+      { label: 'Warehouses', to: '/warehouses', icon: Building2, permissions: ['warehouse:read'] },
       { label: 'Alerts', to: '/alerts', icon: Bell, permissions: ['alert:read'] },
     ],
   },

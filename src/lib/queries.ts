@@ -136,6 +136,13 @@ export const auditLogsQuery = (params: { page: number; method?: string }) =>
     placeholderData: keepPreviousData,
   })
 
+export const customersListQuery = (params: { page: number; keyword?: string }) =>
+  queryOptions({
+    queryKey: ['customers', 'list', params],
+    queryFn: () => api.get<Page<Customer>>('/customers', { size: 20, sort: 'name,asc', ...params }),
+    placeholderData: keepPreviousData,
+  })
+
 export const customersQuery = queryOptions({
   queryKey: ['customers'],
   queryFn: () => api.get<Page<Customer>>('/customers', { size: 100, sort: 'name,asc' }),

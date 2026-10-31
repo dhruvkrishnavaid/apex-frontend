@@ -144,6 +144,7 @@ export interface Warehouse {
   name: string
   city: string | null
   country: string | null
+  contactPhone: string | null
   isActive: boolean
 }
 
@@ -274,5 +275,8 @@ export interface Customer {
   name: string
   email: string | null
   phone: string | null
+  city: string | null
+  country: string | null
+  notes: string | null
   isActive: boolean
 }
