@@ -146,3 +146,17 @@ export interface Warehouse {
   country: string | null
   isActive: boolean
 }
+
+export interface Movement {
+  id: string
+  variantId: string
+  sku: string
+  warehouseId: string
+  warehouseCode: string
+  type: string
+  quantityChange: number
+  quantityAfter: number
+  referenceType: string | null
+  reason: string | null
+  createdAt: string
+}

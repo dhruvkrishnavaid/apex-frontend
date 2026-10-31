@@ -1,6 +1,6 @@
 import { keepPreviousData, queryOptions } from '@tanstack/react-query'
 import { api } from './api'
-import type { Alert, Category, Dashboard, Page, Product, SalesReport, TopProductRow } from './types'
+import type { Alert, Category, Dashboard, Movement, Page, Product, SalesReport, StockLevel, TopProductRow, Warehouse } from './types'
 
 const isoDate = (d: Date) => d.toISOString().slice(0, 10)
 
@@ -56,4 +56,24 @@ export const productQuery = (id: string) =>
   queryOptions({
     queryKey: ['products', id],
     queryFn: () => api.get<Product>(`/products/${id}`),
+  })
+
+export const warehousesQuery = queryOptions({
+  queryKey: ['warehouses'],
+  queryFn: () => api.get<Page<Warehouse>>('/warehouses', { size: 100 }),
+  staleTime: 5 * 60_000,
+})
+
+export const stockQuery = (params: { page: number; warehouseId?: string; inStockOnly?: boolean }) =>
+  queryOptions({
+    queryKey: ['inventory', 'stock', params],
+    queryFn: () => api.get<Page<StockLevel>>('/inventory', { size: 20, ...params }),
+    placeholderData: keepPreviousData,
+  })
+
+export const movementsQuery = (params: { page: number; warehouseId?: string }) =>
+  queryOptions({
+    queryKey: ['inventory', 'movements', params],
+    queryFn: () => api.get<Page<Movement>>('/inventory/movements', { size: 20, sort: 'createdAt,desc', ...params }),
+    placeholderData: keepPreviousData,
   })
