@@ -79,7 +79,7 @@ export function RoleDialog({ open, onOpenChange, role }: { open: boolean; onOpen
                 <div className="flex flex-wrap gap-x-4 gap-y-2">
                   {perms.map((p) => (
                     <label key={p} className="flex items-center gap-2 text-sm">
-                      <input type="checkbox" className="size-4 accent-primary" checked={selected.has(p)} onChange={() => toggle(p)} />
+                      <input type="checkbox" className="size-4 accent-primary" aria-label={p} checked={selected.has(p)} onChange={() => toggle(p)} />
                       {p.split(':')[1]}
                     </label>
                   ))}

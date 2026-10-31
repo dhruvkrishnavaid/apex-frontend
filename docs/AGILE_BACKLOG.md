@@ -65,8 +65,13 @@ Smoke test (backend on in-memory H2, admin and a warehouse-staff user): login/lo
 product create, stock and alerts, new order with tax, pick/pack/ship, purchase order submit and partial receipt,
 user create, audit log, mobile drawer and no horizontal overflow at 375px.
 
+Smoke test 2 (sprints 16-19, H2 backend): return recorded with refund incl. tax and restock; transfer
+create (insufficient-stock error shown, then success), dispatch, receive; reorder rule (unknown SKU error, then
+create); custom role with chosen permissions. Pages render for customers, warehouses and new purchase order; the
+purchase order submit, customer and warehouse dialogs were not exercised.
+
 ## Next (unscheduled)
 
-- Remaining write flows: create purchase orders, customer management page, stock transfers, role management, reorder rules, returns, categories.
+- Remaining write flows: categories, storage locations, supplier catalogue (supplier products), product media and barcodes, partial picking and partial transfer receipt, change own password.
 - Warehouses page, reports pages (stock valuation, sales), returns, own-password change.
 - Tests (Vitest + Testing Library) and CI.
