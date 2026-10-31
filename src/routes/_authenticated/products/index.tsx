@@ -1,12 +1,15 @@
 import { useEffect, useState } from 'react'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
-import { Search } from 'lucide-react'
+import { Plus, Search } from 'lucide-react'
 import { z } from 'zod'
 import { EmptyState } from '#/components/common/empty-state'
 import { PageHeader } from '#/components/common/page-header'
 import { Pagination } from '#/components/common/pagination'
+import { ProductDialog } from '#/components/catalog/product-dialogs'
+import { useAuth } from '#/auth'
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
@@ -39,6 +42,8 @@ function ProductsPage() {
   const search = Route.useSearch()
   const navigate = useNavigate({ from: Route.fullPath })
   const [keyword, setKeyword] = useState(search.keyword ?? '')
+  const { can } = useAuth()
+  const [creating, setCreating] = useState(false)
 
   useEffect(() => {
     const t = setTimeout(() => {
@@ -55,7 +60,18 @@ function ProductsPage() {
 
   return (
     <>
-      <PageHeader title="Products" description="Browse the catalogue, variants and prices." />
+      <PageHeader
+        title="Products"
+        description="Browse the catalogue, variants and prices."
+        actions={
+          can('product:create') && (
+            <Button onClick={() => setCreating(true)}>
+              <Plus /> New product
+            </Button>
+          )
+        }
+      />
+      <ProductDialog open={creating} onOpenChange={setCreating} />
       <div className="mb-4 flex flex-col gap-3 sm:flex-row">
         <div className="relative flex-1">
           <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />

@@ -1,8 +1,13 @@
+import { useState } from 'react'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
-import { ArrowLeft } from 'lucide-react'
+import { ArrowLeft, Pencil, Plus } from 'lucide-react'
 import { EmptyState } from '#/components/common/empty-state'
 import { PageHeader } from '#/components/common/page-header'
+import { ProductDialog, VariantDialog } from '#/components/catalog/product-dialogs'
+import { useAuth } from '#/auth'
+import { Button } from '@/components/ui/button'
+import type { Variant } from '#/lib/types'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -15,6 +20,10 @@ export const Route = createFileRoute('/_authenticated/products/$productId')({ co
 function ProductPage() {
   const { productId } = Route.useParams()
   const { data: product, isPending, isError } = useQuery(productQuery(productId))
+  const { can } = useAuth()
+  const [editingProduct, setEditingProduct] = useState(false)
+  const [variantDialog, setVariantDialog] = useState<{ open: boolean; variant?: Variant }>({ open: false })
+  const canUpdate = can('product:update')
 
   return (
     <>
@@ -30,12 +39,26 @@ function ProductPage() {
           <PageHeader
             title={product.name}
             description={[product.categoryName, product.brand].filter(Boolean).join(' · ')}
-            actions={<Badge variant={product.isActive ? 'default' : 'secondary'}>{product.isActive ? 'Active' : 'Inactive'}</Badge>}
+            actions={
+              <>
+                <Badge variant={product.isActive ? 'default' : 'secondary'}>{product.isActive ? 'Active' : 'Inactive'}</Badge>
+                {canUpdate && (
+                  <Button variant="outline" size="sm" onClick={() => setEditingProduct(true)}>
+                    <Pencil /> Edit
+                  </Button>
+                )}
+              </>
+            }
           />
           {product.description && <p className="mb-6 max-w-prose text-sm text-muted-foreground">{product.description}</p>}
           <Card>
-            <CardHeader>
+            <CardHeader className="flex flex-row items-center justify-between">
               <CardTitle>Variants</CardTitle>
+              {canUpdate && (
+                <Button size="sm" onClick={() => setVariantDialog({ open: true })}>
+                  <Plus /> Add variant
+                </Button>
+              )}
             </CardHeader>
             <CardContent className="overflow-x-auto">
               <Table>
@@ -46,6 +69,7 @@ function ProductPage() {
                     <TableHead>Barcodes</TableHead>
                     <TableHead className="text-right">Cost</TableHead>
                     <TableHead className="text-right">Retail</TableHead>
+                    {canUpdate && <TableHead className="w-16" />}
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -60,12 +84,26 @@ function ProductPage() {
                       <TableCell className="font-mono text-xs">{v.barcodes.map((b) => b.barcode).join(', ') || '—'}</TableCell>
                       <TableCell className="text-right tabular-nums">{formatCurrency(v.costPrice)}</TableCell>
                       <TableCell className="text-right tabular-nums">{formatCurrency(v.retailPrice)}</TableCell>
+                      {canUpdate && (
+                        <TableCell className="text-right">
+                          <Button variant="ghost" size="icon" aria-label={`Edit ${v.sku}`} onClick={() => setVariantDialog({ open: true, variant: v })}>
+                            <Pencil />
+                          </Button>
+                        </TableCell>
+                      )}
                     </TableRow>
                   ))}
                 </TableBody>
               </Table>
             </CardContent>
           </Card>
+          <ProductDialog open={editingProduct} onOpenChange={setEditingProduct} product={product} />
+          <VariantDialog
+            open={variantDialog.open}
+            onOpenChange={(o) => setVariantDialog((d) => ({ ...d, open: o }))}
+            productId={product.id}
+            variant={variantDialog.variant}
+          />
         </>
       )}
     </>

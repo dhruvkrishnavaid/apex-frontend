@@ -38,6 +38,10 @@ named `Sprint N: ...`. Mobile-first and responsive throughout; permission-aware 
 | 8 | F7 | Sales orders list/detail and fulfilment actions | Done |
 | 9 | F6 | Suppliers and purchase orders | Done |
 | 10 | F2, F8 | Users, roles, audit log (read-only views) | Done |
+| 11 | F4 | Reusable form dialog; create/edit product, add/edit variant | Done |
+| 12 | F6 | Create/edit supplier | Planned |
+| 13 | F2 | Create user, edit user (role, status), reset password | Planned |
+| 14 | F7 | New sales order (customer, warehouse, lines) and customer creation | Planned |
 
 ## Backlog (stories)
 
