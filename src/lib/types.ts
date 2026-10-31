@@ -208,3 +208,43 @@ export interface Order {
   deliveredAt: string | null
   createdAt: string
 }
+
+export interface Supplier {
+  id: string
+  code: string
+  name: string
+  contactName: string | null
+  email: string | null
+  phone: string | null
+  city: string | null
+  country: string | null
+  paymentTerms: string | null
+  leadTimeDays: number | null
+  isActive: boolean
+}
+
+export interface PoLine {
+  id: string
+  variantId: string
+  sku: string
+  productName: string
+  quantityOrdered: number
+  quantityReceived: number
+  quantityOutstanding: number
+  unitCost: number
+  lineTotal: number
+}
+
+export interface PurchaseOrder {
+  id: string
+  poNumber: string
+  supplierName: string
+  warehouseCode: string
+  status: 'DRAFT' | 'ORDERED' | 'PARTIALLY_RECEIVED' | 'RECEIVED' | 'CANCELLED' | 'CLOSED'
+  expectedDate: string | null
+  notes: string | null
+  totalAmount: number
+  lines: PoLine[]
+  orderedAt: string | null
+  createdAt: string
+}

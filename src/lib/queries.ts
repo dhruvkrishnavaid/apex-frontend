@@ -1,6 +1,6 @@
 import { keepPreviousData, queryOptions } from '@tanstack/react-query'
 import { api } from './api'
-import type { Alert, Category, Dashboard, Movement, Order, Page, Product, ReplenishmentSuggestion, SalesReport, StockLevel, TopProductRow, Warehouse } from './types'
+import type { Alert, Category, Dashboard, Movement, Order, Page, Product, PurchaseOrder, ReplenishmentSuggestion, SalesReport, StockLevel, Supplier, TopProductRow, Warehouse } from './types'
 
 const isoDate = (d: Date) => d.toISOString().slice(0, 10)
 
@@ -99,3 +99,20 @@ export const ordersQuery = (params: { page: number; status?: string; orderNumber
 
 export const orderQuery = (id: string) =>
   queryOptions({ queryKey: ['orders', id], queryFn: () => api.get<Order>(`/orders/${id}`) })
+
+export const suppliersQuery = (params: { page: number; keyword?: string }) =>
+  queryOptions({
+    queryKey: ['suppliers', params],
+    queryFn: () => api.get<Page<Supplier>>('/suppliers', { size: 20, ...params }),
+    placeholderData: keepPreviousData,
+  })
+
+export const purchaseOrdersQuery = (params: { page: number; status?: string }) =>
+  queryOptions({
+    queryKey: ['purchase-orders', 'list', params],
+    queryFn: () => api.get<Page<PurchaseOrder>>('/purchase-orders', { size: 20, sort: 'createdAt,desc', ...params }),
+    placeholderData: keepPreviousData,
+  })
+
+export const purchaseOrderQuery = (id: string) =>
+  queryOptions({ queryKey: ['purchase-orders', id], queryFn: () => api.get<PurchaseOrder>(`/purchase-orders/${id}`) })

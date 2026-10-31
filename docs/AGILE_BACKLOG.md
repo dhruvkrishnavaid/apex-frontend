@@ -36,7 +36,7 @@ named `Sprint N: ...`. Mobile-first and responsive throughout; permission-aware 
 | 6 | F5 | Stock levels, movement ledger, adjustments, warehouses | Done |
 | 7 | F8 | Alerts and replenishment suggestions | Done |
 | 8 | F7 | Sales orders list/detail and fulfilment actions | Done |
-| 9 | F6 | Suppliers and purchase orders | Planned |
+| 9 | F6 | Suppliers and purchase orders | Done |
 | 10 | F2, F8 | Users, roles, audit log | Planned |
 
 ## Backlog (stories)
