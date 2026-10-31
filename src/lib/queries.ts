@@ -147,3 +147,8 @@ export const customersQuery = queryOptions({
   queryKey: ['customers'],
   queryFn: () => api.get<Page<Customer>>('/customers', { size: 100, sort: 'name,asc' }),
 })
+
+export const supplierOptionsQuery = queryOptions({
+  queryKey: ['suppliers', 'options'],
+  queryFn: () => api.get<Page<Supplier>>('/suppliers', { size: 100, active: true, sort: 'name,asc' }),
+})

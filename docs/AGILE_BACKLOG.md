@@ -57,7 +57,7 @@ named `Sprint N: ...`. Mobile-first and responsive throughout; permission-aware 
 - F2: As an admin I can manage users and roles; F8: review the audit trail.
 | 15 | F1, F2 | Smoke test against backend; replace next-themes (React 19 script warning); permission route guards; layout fixes | Done |
 | 16 | F7, F5 | Customers and warehouses pages (create/edit) | Done |
-| 17 | F6 | Create purchase order; shared variant picker and line editor | Planned |
+| 17 | F6 | Create purchase order; shared variant picker and line editor | Done |
 | 18 | F5, F8 | Stock transfers (create, dispatch, receive, cancel) and reorder rules | Planned |
 | 19 | F7, F2 | Returns against orders; role management | Planned |
 

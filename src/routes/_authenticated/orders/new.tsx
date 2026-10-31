@@ -1,17 +1,19 @@
 import { useState } from 'react'
 import { createFileRoute, Link, redirect, useNavigate } from '@tanstack/react-router'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { ArrowLeft, Loader2, Minus, Plus, Search, Trash2, UserPlus } from 'lucide-react'
+import { ArrowLeft, Loader2, UserPlus } from 'lucide-react'
 import { toast } from 'sonner'
 import { FormDialog, optional } from '#/components/common/form-dialog'
+import { addLine, CartLines, type CartLine } from '#/components/common/cart-lines'
 import { PageHeader } from '#/components/common/page-header'
+import { VariantPicker } from '#/components/common/variant-picker'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { api } from '#/lib/api'
-import { customersQuery, productsQuery, warehousesQuery } from '#/lib/queries'
+import { customersQuery, warehousesQuery } from '#/lib/queries'
 import { formatCurrency } from '#/lib/format'
 import type { Order } from '#/lib/types'
 
@@ -22,12 +24,8 @@ export const Route = createFileRoute('/_authenticated/orders/new')({
   component: NewOrderPage,
 })
 
-interface CartLine {
-  variantId: string
-  sku: string
-  productName: string
+interface OrderLine extends CartLine {
   unitPrice: number
-  quantity: number
 }
 
 const CHANNELS = [
@@ -45,7 +43,7 @@ function NewOrderPage() {
   const [customerId, setCustomerId] = useState('walk-in')
   const [channel, setChannel] = useState('IN_STORE')
   const [notes, setNotes] = useState('')
-  const [lines, setLines] = useState<CartLine[]>([])
+  const [lines, setLines] = useState<OrderLine[]>([])
   const [newCustomer, setNewCustomer] = useState(false)
 
   const subtotal = lines.reduce((sum, l) => sum + l.unitPrice * l.quantity, 0)
@@ -69,15 +67,6 @@ function NewOrderPage() {
     onError: (e: Error) => toast.error(e.message),
   })
 
-  const addLine = (line: Omit<CartLine, 'quantity'>) =>
-    setLines((ls) =>
-      ls.some((l) => l.variantId === line.variantId)
-        ? ls.map((l) => (l.variantId === line.variantId ? { ...l, quantity: l.quantity + 1 } : l))
-        : [...ls, { ...line, quantity: 1 }],
-    )
-  const setQty = (variantId: string, quantity: number) =>
-    setLines((ls) => ls.map((l) => (l.variantId === variantId ? { ...l, quantity: Math.max(1, quantity) } : l)))
-
   const ready = !!warehouseId && lines.length > 0
 
   return (
@@ -94,7 +83,7 @@ function NewOrderPage() {
               <CardTitle>Add products</CardTitle>
             </CardHeader>
             <CardContent>
-              <VariantPicker onAdd={addLine} />
+              <VariantPicker onAdd={(v) => setLines((ls) => addLine(ls, { variantId: v.variantId, sku: v.sku, productName: v.productName, unitPrice: v.retailPrice, quantity: 1 }))} />
             </CardContent>
           </Card>
         </div>
@@ -175,32 +164,7 @@ function NewOrderPage() {
               <CardTitle>Order lines</CardTitle>
             </CardHeader>
             <CardContent>
-              {lines.length === 0 ? (
-                <p className="text-sm text-muted-foreground">Search for a product and add a variant.</p>
-              ) : (
-                <ul className="divide-y">
-                  {lines.map((l) => (
-                    <li key={l.variantId} className="flex items-center gap-2 py-2.5">
-                      <div className="min-w-0 flex-1">
-                        <p className="truncate text-sm font-medium">{l.productName}</p>
-                        <p className="font-mono text-xs text-muted-foreground">
-                          {l.sku} · {formatCurrency(l.unitPrice)}
-                        </p>
-                      </div>
-                      <Button type="button" variant="outline" size="icon" className="size-8" aria-label="Decrease quantity" onClick={() => setQty(l.variantId, l.quantity - 1)}>
-                        <Minus />
-                      </Button>
-                      <span className="w-7 text-center text-sm tabular-nums">{l.quantity}</span>
-                      <Button type="button" variant="outline" size="icon" className="size-8" aria-label="Increase quantity" onClick={() => setQty(l.variantId, l.quantity + 1)}>
-                        <Plus />
-                      </Button>
-                      <Button type="button" variant="ghost" size="icon" className="size-8" aria-label={`Remove ${l.sku}`} onClick={() => setLines((ls) => ls.filter((x) => x.variantId !== l.variantId))}>
-                        <Trash2 />
-                      </Button>
-                    </li>
-                  ))}
-                </ul>
-              )}
+              <CartLines lines={lines} onChange={setLines} extra={(l) => <span className="text-sm tabular-nums text-muted-foreground">{formatCurrency(l.unitPrice)}</span>} />
               <div className="mt-4 flex items-center justify-between border-t pt-4">
                 <span className="text-sm text-muted-foreground">Subtotal (before tax)</span>
                 <span className="font-semibold tabular-nums">{formatCurrency(subtotal)}</span>
@@ -236,35 +200,3 @@ function NewOrderPage() {
   )
 }
 
-function VariantPicker({ onAdd }: { onAdd: (line: Omit<CartLine, 'quantity'>) => void }) {
-  const [keyword, setKeyword] = useState('')
-  const { data, isFetching } = useQuery({ ...productsQuery({ page: 0, keyword: keyword || undefined }) })
-
-  return (
-    <div className="space-y-3">
-      <div className="relative">
-        <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-        <Input value={keyword} onChange={(e) => setKeyword(e.target.value)} placeholder="Search products by name…" className="pl-9" aria-label="Search products" />
-      </div>
-      <ul className="divide-y rounded-md border">
-        {data?.content
-          .filter((p) => p.isActive)
-          .flatMap((p) => p.variants.filter((v) => v.isActive).map((v) => ({ p, v })))
-          .map(({ p, v }) => (
-            <li key={v.id} className="flex items-center gap-3 p-3">
-              <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-medium">{p.name}</p>
-                <p className="font-mono text-xs text-muted-foreground">{v.sku}</p>
-              </div>
-              <span className="text-sm tabular-nums">{formatCurrency(v.retailPrice)}</span>
-              <Button type="button" size="sm" variant="outline" onClick={() => onAdd({ variantId: v.id, sku: v.sku, productName: p.name, unitPrice: v.retailPrice })}>
-                <Plus /> Add
-              </Button>
-            </li>
-          ))}
-        {data && data.content.length === 0 && <li className="p-4 text-sm text-muted-foreground">No products match.</li>}
-        {!data && isFetching && <li className="p-4 text-sm text-muted-foreground">Loading…</li>}
-      </ul>
-    </div>
-  )
-}
