@@ -25,6 +25,9 @@ import { Route as AuthenticatedPurchaseOrdersIndexRouteImport } from './routes/_
 import { Route as AuthenticatedPurchaseOrdersPoIdRouteImport } from './routes/_authenticated/purchase-orders/$poId'
 import { Route as AuthenticatedPurchaseOrdersNewRouteImport } from './routes/_authenticated/purchase-orders/new'
 import { Route as AuthenticatedSuppliersIndexRouteImport } from './routes/_authenticated/suppliers/index'
+import { Route as AuthenticatedTransfersIndexRouteImport } from './routes/_authenticated/transfers/index'
+import { Route as AuthenticatedTransfersTransferIdRouteImport } from './routes/_authenticated/transfers/$transferId'
+import { Route as AuthenticatedTransfersNewRouteImport } from './routes/_authenticated/transfers/new'
 import { Route as AuthenticatedUsersIndexRouteImport } from './routes/_authenticated/users/index'
 import { Route as AuthenticatedWarehousesIndexRouteImport } from './routes/_authenticated/warehouses/index'
 
@@ -118,6 +121,24 @@ const AuthenticatedSuppliersIndexRoute =
     path: '/suppliers/',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedTransfersIndexRoute =
+  AuthenticatedTransfersIndexRouteImport.update({
+    id: '/transfers/',
+    path: '/transfers/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedTransfersTransferIdRoute =
+  AuthenticatedTransfersTransferIdRouteImport.update({
+    id: '/transfers/$transferId',
+    path: '/transfers/$transferId',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedTransfersNewRoute =
+  AuthenticatedTransfersNewRouteImport.update({
+    id: '/transfers/new',
+    path: '/transfers/new',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedUsersIndexRoute = AuthenticatedUsersIndexRouteImport.update({
   id: '/users/',
   path: '/users/',
@@ -138,6 +159,8 @@ export interface FileRoutesByFullPath {
   '/products/$productId': typeof AuthenticatedProductsProductIdRoute
   '/purchase-orders/$poId': typeof AuthenticatedPurchaseOrdersPoIdRoute
   '/purchase-orders/new': typeof AuthenticatedPurchaseOrdersNewRoute
+  '/transfers/$transferId': typeof AuthenticatedTransfersTransferIdRoute
+  '/transfers/new': typeof AuthenticatedTransfersNewRoute
   '/alerts/': typeof AuthenticatedAlertsIndexRoute
   '/audit/': typeof AuthenticatedAuditIndexRoute
   '/customers/': typeof AuthenticatedCustomersIndexRoute
@@ -146,6 +169,7 @@ export interface FileRoutesByFullPath {
   '/products/': typeof AuthenticatedProductsIndexRoute
   '/purchase-orders/': typeof AuthenticatedPurchaseOrdersIndexRoute
   '/suppliers/': typeof AuthenticatedSuppliersIndexRoute
+  '/transfers/': typeof AuthenticatedTransfersIndexRoute
   '/users/': typeof AuthenticatedUsersIndexRoute
   '/warehouses/': typeof AuthenticatedWarehousesIndexRoute
 }
@@ -157,6 +181,8 @@ export interface FileRoutesByTo {
   '/products/$productId': typeof AuthenticatedProductsProductIdRoute
   '/purchase-orders/$poId': typeof AuthenticatedPurchaseOrdersPoIdRoute
   '/purchase-orders/new': typeof AuthenticatedPurchaseOrdersNewRoute
+  '/transfers/$transferId': typeof AuthenticatedTransfersTransferIdRoute
+  '/transfers/new': typeof AuthenticatedTransfersNewRoute
   '/alerts': typeof AuthenticatedAlertsIndexRoute
   '/audit': typeof AuthenticatedAuditIndexRoute
   '/customers': typeof AuthenticatedCustomersIndexRoute
@@ -165,6 +191,7 @@ export interface FileRoutesByTo {
   '/products': typeof AuthenticatedProductsIndexRoute
   '/purchase-orders': typeof AuthenticatedPurchaseOrdersIndexRoute
   '/suppliers': typeof AuthenticatedSuppliersIndexRoute
+  '/transfers': typeof AuthenticatedTransfersIndexRoute
   '/users': typeof AuthenticatedUsersIndexRoute
   '/warehouses': typeof AuthenticatedWarehousesIndexRoute
 }
@@ -178,6 +205,8 @@ export interface FileRoutesById {
   '/_authenticated/products/$productId': typeof AuthenticatedProductsProductIdRoute
   '/_authenticated/purchase-orders/$poId': typeof AuthenticatedPurchaseOrdersPoIdRoute
   '/_authenticated/purchase-orders/new': typeof AuthenticatedPurchaseOrdersNewRoute
+  '/_authenticated/transfers/$transferId': typeof AuthenticatedTransfersTransferIdRoute
+  '/_authenticated/transfers/new': typeof AuthenticatedTransfersNewRoute
   '/_authenticated/alerts/': typeof AuthenticatedAlertsIndexRoute
   '/_authenticated/audit/': typeof AuthenticatedAuditIndexRoute
   '/_authenticated/customers/': typeof AuthenticatedCustomersIndexRoute
@@ -186,6 +215,7 @@ export interface FileRoutesById {
   '/_authenticated/products/': typeof AuthenticatedProductsIndexRoute
   '/_authenticated/purchase-orders/': typeof AuthenticatedPurchaseOrdersIndexRoute
   '/_authenticated/suppliers/': typeof AuthenticatedSuppliersIndexRoute
+  '/_authenticated/transfers/': typeof AuthenticatedTransfersIndexRoute
   '/_authenticated/users/': typeof AuthenticatedUsersIndexRoute
   '/_authenticated/warehouses/': typeof AuthenticatedWarehousesIndexRoute
 }
@@ -199,6 +229,8 @@ export interface FileRouteTypes {
     | '/products/$productId'
     | '/purchase-orders/$poId'
     | '/purchase-orders/new'
+    | '/transfers/$transferId'
+    | '/transfers/new'
     | '/alerts/'
     | '/audit/'
     | '/customers/'
@@ -207,6 +239,7 @@ export interface FileRouteTypes {
     | '/products/'
     | '/purchase-orders/'
     | '/suppliers/'
+    | '/transfers/'
     | '/users/'
     | '/warehouses/'
   fileRoutesByTo: FileRoutesByTo
@@ -218,6 +251,8 @@ export interface FileRouteTypes {
     | '/products/$productId'
     | '/purchase-orders/$poId'
     | '/purchase-orders/new'
+    | '/transfers/$transferId'
+    | '/transfers/new'
     | '/alerts'
     | '/audit'
     | '/customers'
@@ -226,6 +261,7 @@ export interface FileRouteTypes {
     | '/products'
     | '/purchase-orders'
     | '/suppliers'
+    | '/transfers'
     | '/users'
     | '/warehouses'
   id:
@@ -238,6 +274,8 @@ export interface FileRouteTypes {
     | '/_authenticated/products/$productId'
     | '/_authenticated/purchase-orders/$poId'
     | '/_authenticated/purchase-orders/new'
+    | '/_authenticated/transfers/$transferId'
+    | '/_authenticated/transfers/new'
     | '/_authenticated/alerts/'
     | '/_authenticated/audit/'
     | '/_authenticated/customers/'
@@ -246,6 +284,7 @@ export interface FileRouteTypes {
     | '/_authenticated/products/'
     | '/_authenticated/purchase-orders/'
     | '/_authenticated/suppliers/'
+    | '/_authenticated/transfers/'
     | '/_authenticated/users/'
     | '/_authenticated/warehouses/'
   fileRoutesById: FileRoutesById
@@ -369,6 +408,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSuppliersIndexRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/transfers/': {
+      id: '/_authenticated/transfers/'
+      path: '/transfers'
+      fullPath: '/transfers/'
+      preLoaderRoute: typeof AuthenticatedTransfersIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/transfers/$transferId': {
+      id: '/_authenticated/transfers/$transferId'
+      path: '/transfers/$transferId'
+      fullPath: '/transfers/$transferId'
+      preLoaderRoute: typeof AuthenticatedTransfersTransferIdRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/transfers/new': {
+      id: '/_authenticated/transfers/new'
+      path: '/transfers/new'
+      fullPath: '/transfers/new'
+      preLoaderRoute: typeof AuthenticatedTransfersNewRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/users/': {
       id: '/_authenticated/users/'
       path: '/users'
@@ -393,6 +453,8 @@ interface AuthenticatedRouteChildren {
   AuthenticatedProductsProductIdRoute: typeof AuthenticatedProductsProductIdRoute
   AuthenticatedPurchaseOrdersPoIdRoute: typeof AuthenticatedPurchaseOrdersPoIdRoute
   AuthenticatedPurchaseOrdersNewRoute: typeof AuthenticatedPurchaseOrdersNewRoute
+  AuthenticatedTransfersTransferIdRoute: typeof AuthenticatedTransfersTransferIdRoute
+  AuthenticatedTransfersNewRoute: typeof AuthenticatedTransfersNewRoute
   AuthenticatedAlertsIndexRoute: typeof AuthenticatedAlertsIndexRoute
   AuthenticatedAuditIndexRoute: typeof AuthenticatedAuditIndexRoute
   AuthenticatedCustomersIndexRoute: typeof AuthenticatedCustomersIndexRoute
@@ -401,6 +463,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedProductsIndexRoute: typeof AuthenticatedProductsIndexRoute
   AuthenticatedPurchaseOrdersIndexRoute: typeof AuthenticatedPurchaseOrdersIndexRoute
   AuthenticatedSuppliersIndexRoute: typeof AuthenticatedSuppliersIndexRoute
+  AuthenticatedTransfersIndexRoute: typeof AuthenticatedTransfersIndexRoute
   AuthenticatedUsersIndexRoute: typeof AuthenticatedUsersIndexRoute
   AuthenticatedWarehousesIndexRoute: typeof AuthenticatedWarehousesIndexRoute
 }
@@ -412,6 +475,8 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedProductsProductIdRoute: AuthenticatedProductsProductIdRoute,
   AuthenticatedPurchaseOrdersPoIdRoute: AuthenticatedPurchaseOrdersPoIdRoute,
   AuthenticatedPurchaseOrdersNewRoute: AuthenticatedPurchaseOrdersNewRoute,
+  AuthenticatedTransfersTransferIdRoute: AuthenticatedTransfersTransferIdRoute,
+  AuthenticatedTransfersNewRoute: AuthenticatedTransfersNewRoute,
   AuthenticatedAlertsIndexRoute: AuthenticatedAlertsIndexRoute,
   AuthenticatedAuditIndexRoute: AuthenticatedAuditIndexRoute,
   AuthenticatedCustomersIndexRoute: AuthenticatedCustomersIndexRoute,
@@ -420,6 +485,7 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedProductsIndexRoute: AuthenticatedProductsIndexRoute,
   AuthenticatedPurchaseOrdersIndexRoute: AuthenticatedPurchaseOrdersIndexRoute,
   AuthenticatedSuppliersIndexRoute: AuthenticatedSuppliersIndexRoute,
+  AuthenticatedTransfersIndexRoute: AuthenticatedTransfersIndexRoute,
   AuthenticatedUsersIndexRoute: AuthenticatedUsersIndexRoute,
   AuthenticatedWarehousesIndexRoute: AuthenticatedWarehousesIndexRoute,
 }

@@ -1,7 +1,11 @@
 import { requires } from '#/lib/guards'
+import { useState } from 'react'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { Pencil, Plus, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
+import { RuleDialog } from '#/components/inventory/rule-dialog'
+import type { ReorderRule } from '#/lib/types'
 import { z } from 'zod'
 import { EmptyState } from '#/components/common/empty-state'
 import { PageHeader } from '#/components/common/page-header'
@@ -14,13 +18,13 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useAuth } from '#/auth'
 import { api } from '#/lib/api'
-import { alertsQuery, suggestionsQuery } from '#/lib/queries'
+import { alertsQuery, reorderRulesQuery, suggestionsQuery } from '#/lib/queries'
 import { formatCurrency } from '#/lib/format'
 
 export const Route = createFileRoute('/_authenticated/alerts/')({
   beforeLoad: requires('alert:read'),
   validateSearch: z.object({
-    view: z.enum(['OPEN', 'ACKNOWLEDGED', 'RESOLVED', 'suggestions']).catch('OPEN').default('OPEN'),
+    view: z.enum(['OPEN', 'ACKNOWLEDGED', 'RESOLVED', 'suggestions', 'rules']).catch('OPEN').default('OPEN'),
     page: z.number().int().min(0).catch(0).default(0),
   }),
   component: AlertsPage,
@@ -38,9 +42,10 @@ function AlertsPage() {
           <TabsTrigger value="ACKNOWLEDGED">Acknowledged</TabsTrigger>
           <TabsTrigger value="RESOLVED">Resolved</TabsTrigger>
           <TabsTrigger value="suggestions">Replenishment</TabsTrigger>
+          <TabsTrigger value="rules">Rules</TabsTrigger>
         </TabsList>
       </Tabs>
-      {search.view === 'suggestions' ? <Suggestions /> : <AlertList status={search.view} />}
+      {search.view === 'suggestions' ? <Suggestions /> : search.view === 'rules' ? <Rules /> : <AlertList status={search.view} />}
     </>
   )
 }
@@ -153,5 +158,88 @@ function Suggestions() {
         </TableBody>
       </Table>
     </Card>
+  )
+}
+
+function Rules() {
+  const { can } = useAuth()
+  const queryClient = useQueryClient()
+  const { data, isPending, isError } = useQuery(reorderRulesQuery)
+  const [dialog, setDialog] = useState<{ open: boolean; rule?: ReorderRule }>({ open: false })
+  const manage = can('alert:manage')
+
+  const remove = useMutation({
+    mutationFn: (id: string) => api.delete(`/reorder-rules/${id}`),
+    onSuccess: () => {
+      toast.success('Rule deleted')
+      queryClient.invalidateQueries({ queryKey: ['reorder-rules'] })
+    },
+    onError: (e: Error) => toast.error(e.message),
+  })
+
+  if (isError) return <EmptyState title="Could not load rules" />
+  if (isPending) return <Loading />
+
+  return (
+    <>
+      {manage && (
+        <div className="mb-4">
+          <Button onClick={() => setDialog({ open: true })}>
+            <Plus /> New rule
+          </Button>
+        </div>
+      )}
+      <RuleDialog open={dialog.open} onOpenChange={(o) => setDialog((d) => ({ ...d, open: o }))} rule={dialog.rule} />
+      {!data.length ? (
+        <EmptyState title="No reorder rules" description="Rules raise an alert when stock falls to the reorder point." />
+      ) : (
+        <Card className="overflow-x-auto">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Product</TableHead>
+                <TableHead>Warehouse</TableHead>
+                <TableHead className="text-right">Reorder point</TableHead>
+                <TableHead className="text-right">Reorder qty</TableHead>
+                <TableHead>Status</TableHead>
+                {manage && <TableHead className="w-24" />}
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {data.map((r) => (
+                <TableRow key={r.id}>
+                  <TableCell>
+                    <p className="font-medium">{r.productName}</p>
+                    <p className="font-mono text-xs text-muted-foreground">{r.sku}</p>
+                  </TableCell>
+                  <TableCell>{r.warehouseCode}</TableCell>
+                  <TableCell className="text-right tabular-nums">{r.reorderPoint}</TableCell>
+                  <TableCell className="text-right tabular-nums">{r.reorderQuantity}</TableCell>
+                  <TableCell>
+                    <Badge variant={r.isActive ? 'default' : 'secondary'}>{r.isActive ? 'Active' : 'Inactive'}</Badge>
+                  </TableCell>
+                  {manage && (
+                    <TableCell className="whitespace-nowrap text-right">
+                      <Button variant="ghost" size="icon" aria-label={`Edit rule for ${r.sku}`} onClick={() => setDialog({ open: true, rule: r })}>
+                        <Pencil />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        aria-label={`Delete rule for ${r.sku}`}
+                        disabled={remove.isPending}
+                        onClick={() => confirm(`Delete the rule for ${r.sku} at ${r.warehouseCode}?`) && remove.mutate(r.id)}
+                      >
+                        <Trash2 />
+                      </Button>
+                    </TableCell>
+                  )}
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </Card>
+      )}
+    </>
   )
 }

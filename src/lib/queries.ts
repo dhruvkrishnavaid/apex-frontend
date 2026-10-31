@@ -1,6 +1,6 @@
 import { keepPreviousData, queryOptions } from '@tanstack/react-query'
 import { api } from './api'
-import type { Alert, AuditLog, Category, Customer, Dashboard, Movement, Order, Page, Product, PurchaseOrder, ReplenishmentSuggestion, Role, SalesReport, StockLevel, Supplier, TopProductRow, User, Warehouse } from './types'
+import type { Alert, AuditLog, Category, Customer, Dashboard, Movement, Order, Page, Product, PurchaseOrder, ReorderRule, ReplenishmentSuggestion, Role, SalesReport, StockLevel, Supplier, TopProductRow, Transfer, User, Warehouse } from './types'
 
 const isoDate = (d: Date) => d.toISOString().slice(0, 10)
 
@@ -151,4 +151,19 @@ export const customersQuery = queryOptions({
 export const supplierOptionsQuery = queryOptions({
   queryKey: ['suppliers', 'options'],
   queryFn: () => api.get<Page<Supplier>>('/suppliers', { size: 100, active: true, sort: 'name,asc' }),
+})
+
+export const transfersQuery = (params: { page: number; status?: string }) =>
+  queryOptions({
+    queryKey: ['transfers', 'list', params],
+    queryFn: () => api.get<Page<Transfer>>('/transfers', { size: 20, sort: 'createdAt,desc', ...params }),
+    placeholderData: keepPreviousData,
+  })
+
+export const transferQuery = (id: string) =>
+  queryOptions({ queryKey: ['transfers', id], queryFn: () => api.get<Transfer>(`/transfers/${id}`) })
+
+export const reorderRulesQuery = queryOptions({
+  queryKey: ['reorder-rules'],
+  queryFn: () => api.get<ReorderRule[]>('/reorder-rules'),
 })

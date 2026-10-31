@@ -280,3 +280,38 @@ export interface Customer {
   notes: string | null
   isActive: boolean
 }
+
+export type TransferStatus = 'REQUESTED' | 'IN_TRANSIT' | 'RECEIVED' | 'CANCELLED'
+
+export interface TransferLine {
+  id: string
+  variantId: string
+  sku: string
+  quantity: number
+  receivedQuantity: number | null
+}
+
+export interface Transfer {
+  id: string
+  referenceNumber: string
+  fromWarehouseCode: string
+  toWarehouseCode: string
+  status: TransferStatus
+  notes: string | null
+  lines: TransferLine[]
+  dispatchedAt: string | null
+  receivedAt: string | null
+  createdAt: string
+}
+
+export interface ReorderRule {
+  id: string
+  variantId: string
+  sku: string
+  productName: string
+  warehouseId: string
+  warehouseCode: string
+  reorderPoint: number
+  reorderQuantity: number
+  isActive: boolean
+}
