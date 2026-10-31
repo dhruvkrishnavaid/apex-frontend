@@ -173,3 +173,38 @@ export interface ReplenishmentSuggestion {
   preferredSupplierName: string | null
   estimatedUnitCost: number | null
 }
+
+export type OrderStatus = 'PENDING' | 'PICKING' | 'PACKED' | 'SHIPPED' | 'DELIVERED' | 'CANCELLED'
+
+export interface OrderLine {
+  id: string
+  variantId: string
+  sku: string
+  productName: string
+  quantity: number
+  quantityPicked: number
+  quantityReturned: number
+  unitPrice: number
+  discountPercent: number | null
+  lineTotal: number
+}
+
+export interface Order {
+  id: string
+  orderNumber: string
+  customerName: string | null
+  warehouseCode: string
+  status: OrderStatus
+  channel: string | null
+  shippingAddress: string | null
+  notes: string | null
+  subtotal: number
+  taxAmount: number
+  total: number
+  carrier: string | null
+  trackingNumber: string | null
+  lines: OrderLine[]
+  shippedAt: string | null
+  deliveredAt: string | null
+  createdAt: string
+}

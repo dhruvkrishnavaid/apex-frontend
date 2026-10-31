@@ -1,6 +1,6 @@
 import { keepPreviousData, queryOptions } from '@tanstack/react-query'
 import { api } from './api'
-import type { Alert, Category, Dashboard, Movement, Page, Product, ReplenishmentSuggestion, SalesReport, StockLevel, TopProductRow, Warehouse } from './types'
+import type { Alert, Category, Dashboard, Movement, Order, Page, Product, ReplenishmentSuggestion, SalesReport, StockLevel, TopProductRow, Warehouse } from './types'
 
 const isoDate = (d: Date) => d.toISOString().slice(0, 10)
 
@@ -89,3 +89,13 @@ export const suggestionsQuery = queryOptions({
   queryKey: ['alerts', 'suggestions'],
   queryFn: () => api.get<ReplenishmentSuggestion[]>('/reorder-rules/suggestions'),
 })
+
+export const ordersQuery = (params: { page: number; status?: string; orderNumber?: string }) =>
+  queryOptions({
+    queryKey: ['orders', 'list', params],
+    queryFn: () => api.get<Page<Order>>('/orders', { size: 20, sort: 'createdAt,desc', ...params }),
+    placeholderData: keepPreviousData,
+  })
+
+export const orderQuery = (id: string) =>
+  queryOptions({ queryKey: ['orders', id], queryFn: () => api.get<Order>(`/orders/${id}`) })
