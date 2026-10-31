@@ -160,3 +160,16 @@ export interface Movement {
   reason: string | null
   createdAt: string
 }
+
+export interface ReplenishmentSuggestion {
+  variantId: string
+  sku: string
+  productName: string
+  warehouseId: string
+  warehouseCode: string
+  availableQuantity: number
+  reorderPoint: number
+  suggestedQuantity: number
+  preferredSupplierName: string | null
+  estimatedUnitCost: number | null
+}
