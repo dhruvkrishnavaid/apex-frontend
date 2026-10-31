@@ -1,4 +1,5 @@
-import { Outlet, createFileRoute, redirect } from '@tanstack/react-router'
+import { AppShell } from "#/components/layout/app-shell"
+import { createFileRoute, redirect } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/_authenticated')({
   beforeLoad: ({ context, location }) => {
@@ -6,5 +7,5 @@ export const Route = createFileRoute('/_authenticated')({
       throw redirect({ to: '/login', search: { redirect: location.href } })
     }
   },
-  component: Outlet,
+  component: AppShell,
 })
