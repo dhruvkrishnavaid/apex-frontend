@@ -1,11 +1,15 @@
 import { useEffect, useState } from 'react'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
-import { Search } from 'lucide-react'
+import { Pencil, Plus, Search } from 'lucide-react'
 import { z } from 'zod'
 import { EmptyState } from '#/components/common/empty-state'
 import { PageHeader } from '#/components/common/page-header'
 import { Pagination } from '#/components/common/pagination'
+import { SupplierDialog } from '#/components/procurement/supplier-dialog'
+import { useAuth } from '#/auth'
+import type { Supplier } from '#/lib/types'
+import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -25,6 +29,8 @@ function SuppliersPage() {
   const search = Route.useSearch()
   const navigate = useNavigate({ from: Route.fullPath })
   const [keyword, setKeyword] = useState(search.keyword ?? '')
+  const { can } = useAuth()
+  const [dialog, setDialog] = useState<{ open: boolean; supplier?: Supplier }>({ open: false })
 
   useEffect(() => {
     const t = setTimeout(() => {
@@ -37,7 +43,18 @@ function SuppliersPage() {
 
   return (
     <>
-      <PageHeader title="Suppliers" description="Vendors you purchase stock from." />
+      <PageHeader
+        title="Suppliers"
+        description="Vendors you purchase stock from."
+        actions={
+          can('supplier:create') && (
+            <Button onClick={() => setDialog({ open: true })}>
+              <Plus /> New supplier
+            </Button>
+          )
+        }
+      />
+      <SupplierDialog open={dialog.open} onOpenChange={(o) => setDialog((d) => ({ ...d, open: o }))} supplier={dialog.supplier} />
       <div className="relative mb-4 max-w-md">
         <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
         <Input value={keyword} onChange={(e) => setKeyword(e.target.value)} placeholder="Search suppliers…" className="pl-9" aria-label="Search suppliers" />
@@ -60,6 +77,7 @@ function SuppliersPage() {
                   <TableHead>Terms</TableHead>
                   <TableHead className="text-right">Lead time</TableHead>
                   <TableHead>Status</TableHead>
+                  {can('supplier:update') && <TableHead className="w-16" />}
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -79,6 +97,13 @@ function SuppliersPage() {
                     <TableCell>
                       <Badge variant={s.isActive ? 'default' : 'secondary'}>{s.isActive ? 'Active' : 'Inactive'}</Badge>
                     </TableCell>
+                    {can('supplier:update') && (
+                      <TableCell className="text-right">
+                        <Button variant="ghost" size="icon" aria-label={`Edit ${s.name}`} onClick={() => setDialog({ open: true, supplier: s })}>
+                          <Pencil />
+                        </Button>
+                      </TableCell>
+                    )}
                   </TableRow>
                 ))}
               </TableBody>
