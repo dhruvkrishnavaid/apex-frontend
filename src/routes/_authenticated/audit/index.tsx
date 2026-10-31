@@ -1,3 +1,4 @@
+import { requires } from '#/lib/guards'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
 import { z } from 'zod'
@@ -12,6 +13,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { auditLogsQuery } from '#/lib/queries'
 
 export const Route = createFileRoute('/_authenticated/audit/')({
+  beforeLoad: requires('audit:read'),
   validateSearch: z.object({
     page: z.number().int().min(0).catch(0).default(0),
     method: z.string().optional(),

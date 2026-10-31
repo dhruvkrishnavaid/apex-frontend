@@ -87,8 +87,8 @@ function NewOrderPage() {
       </Link>
       <PageHeader title="New order" description="Stock is reserved in the chosen warehouse when the order is placed." />
 
-      <div className="grid gap-6 lg:grid-cols-5">
-        <div className="space-y-6 lg:col-span-3">
+      <div className="grid gap-6 xl:grid-cols-5">
+        <div className="space-y-6 xl:col-span-3">
           <Card>
             <CardHeader>
               <CardTitle>Add products</CardTitle>
@@ -99,7 +99,7 @@ function NewOrderPage() {
           </Card>
         </div>
 
-        <div className="space-y-6 lg:col-span-2">
+        <div className="space-y-6 xl:col-span-2">
           <Card>
             <CardHeader>
               <CardTitle>Details</CardTitle>

@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { requires } from '#/lib/guards'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { ArrowLeft, Loader2 } from 'lucide-react'
@@ -17,7 +18,9 @@ import { purchaseOrderQuery } from '#/lib/queries'
 import { formatCurrency } from '#/lib/format'
 import type { PurchaseOrder } from '#/lib/types'
 
-export const Route = createFileRoute('/_authenticated/purchase-orders/$poId')({ component: PurchaseOrderPage })
+export const Route = createFileRoute('/_authenticated/purchase-orders/$poId')({
+  beforeLoad: requires('purchase:read'),
+ component: PurchaseOrderPage })
 
 function PurchaseOrderPage() {
   const { poId } = Route.useParams()

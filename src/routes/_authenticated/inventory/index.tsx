@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { requires } from '#/lib/guards'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
 import { z } from 'zod'
@@ -19,6 +20,7 @@ import { formatNumber } from '#/lib/format'
 import type { StockLevel } from '#/lib/types'
 
 export const Route = createFileRoute('/_authenticated/inventory/')({
+  beforeLoad: requires('inventory:read'),
   validateSearch: z.object({
     view: z.enum(['stock', 'movements']).catch('stock').default('stock'),
     page: z.number().int().min(0).catch(0).default(0),

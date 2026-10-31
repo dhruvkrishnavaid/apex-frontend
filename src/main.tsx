@@ -1,7 +1,7 @@
 import ReactDOM from 'react-dom/client'
 import { RouterProvider } from '@tanstack/react-router'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { ThemeProvider } from 'next-themes'
+import { ThemeProvider } from '#/lib/theme'
 import { AuthProvider, useAuth } from './auth'
 import { router } from './router'
 import { Toaster } from '#/components/ui/sonner'
@@ -33,7 +33,7 @@ const rootElement = document.getElementById('app')!
 
 if (!rootElement.innerHTML) {
   ReactDOM.createRoot(rootElement).render(
-    <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+    <ThemeProvider>
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
           <TooltipProvider>

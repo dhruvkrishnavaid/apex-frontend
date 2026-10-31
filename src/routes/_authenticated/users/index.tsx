@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { requires } from '#/lib/guards'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
 import { KeyRound, Pencil, Plus } from 'lucide-react'
@@ -18,6 +19,7 @@ import { useAuth } from '#/auth'
 import { rolesQuery, usersQuery } from '#/lib/queries'
 
 export const Route = createFileRoute('/_authenticated/users/')({
+  beforeLoad: requires('user:read'),
   validateSearch: z.object({
     view: z.enum(['users', 'roles']).catch('users').default('users'),
     page: z.number().int().min(0).catch(0).default(0),

@@ -55,6 +55,11 @@ named `Sprint N: ...`. Mobile-first and responsive throughout; permission-aware 
 - F7: As staff I can follow an order through pick, pack, ship and deliver.
 - F6: As a buyer I can see purchase orders and their receipt progress.
 - F2: As an admin I can manage users and roles; F8: review the audit trail.
+| 15 | F1, F2 | Smoke test against backend; replace next-themes (React 19 script warning); permission route guards; layout fixes | Done |
+
+Smoke test (backend on in-memory H2, admin and a warehouse-staff user): login/logout, restricted dashboard and nav,
+product create, stock and alerts, new order with tax, pick/pack/ship, purchase order submit and partial receipt,
+user create, audit log, mobile drawer and no horizontal overflow at 375px.
 
 ## Next (unscheduled)
 

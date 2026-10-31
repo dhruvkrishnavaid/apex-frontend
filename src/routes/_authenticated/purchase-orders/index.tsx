@@ -1,3 +1,4 @@
+import { requires } from '#/lib/guards'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
 import { z } from 'zod'
@@ -15,6 +16,7 @@ import { formatCurrency } from '#/lib/format'
 const STATUSES = ['DRAFT', 'ORDERED', 'PARTIALLY_RECEIVED', 'RECEIVED', 'CANCELLED', 'CLOSED']
 
 export const Route = createFileRoute('/_authenticated/purchase-orders/')({
+  beforeLoad: requires('purchase:read'),
   validateSearch: z.object({
     page: z.number().int().min(0).catch(0).default(0),
     status: z.string().optional(),

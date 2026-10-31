@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { requires } from '#/lib/guards'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
 import { Plus, Search } from 'lucide-react'
@@ -20,6 +21,7 @@ import { formatCurrency } from '#/lib/format'
 import type { Category, Product } from '#/lib/types'
 
 export const Route = createFileRoute('/_authenticated/products/')({
+  beforeLoad: requires('product:read'),
   validateSearch: z.object({
     page: z.number().int().min(0).catch(0).default(0),
     keyword: z.string().optional(),

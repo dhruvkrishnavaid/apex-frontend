@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { requires } from '#/lib/guards'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
 import { ArrowLeft, Pencil, Plus } from 'lucide-react'
@@ -15,7 +16,9 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { productQuery } from '#/lib/queries'
 import { formatCurrency } from '#/lib/format'
 
-export const Route = createFileRoute('/_authenticated/products/$productId')({ component: ProductPage })
+export const Route = createFileRoute('/_authenticated/products/$productId')({
+  beforeLoad: requires('product:read'),
+ component: ProductPage })
 
 function ProductPage() {
   const { productId } = Route.useParams()

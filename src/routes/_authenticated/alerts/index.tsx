@@ -1,3 +1,4 @@
+import { requires } from '#/lib/guards'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
@@ -17,6 +18,7 @@ import { alertsQuery, suggestionsQuery } from '#/lib/queries'
 import { formatCurrency } from '#/lib/format'
 
 export const Route = createFileRoute('/_authenticated/alerts/')({
+  beforeLoad: requires('alert:read'),
   validateSearch: z.object({
     view: z.enum(['OPEN', 'ACKNOWLEDGED', 'RESOLVED', 'suggestions']).catch('OPEN').default('OPEN'),
     page: z.number().int().min(0).catch(0).default(0),

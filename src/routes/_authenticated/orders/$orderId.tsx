@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { requires } from '#/lib/guards'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { ArrowLeft, Loader2 } from 'lucide-react'
@@ -17,7 +18,9 @@ import { orderQuery } from '#/lib/queries'
 import { formatCurrency } from '#/lib/format'
 import type { Order } from '#/lib/types'
 
-export const Route = createFileRoute('/_authenticated/orders/$orderId')({ component: OrderPage })
+export const Route = createFileRoute('/_authenticated/orders/$orderId')({
+  beforeLoad: requires('order:read'),
+ component: OrderPage })
 
 function OrderPage() {
   const { orderId } = Route.useParams()
@@ -128,9 +131,14 @@ function OrderDetail({ order }: { order: Order }) {
             <div className="flex justify-between"><dt className="text-muted-foreground">Tax</dt><dd className="tabular-nums">{formatCurrency(order.taxAmount)}</dd></div>
             <div className="flex justify-between border-t pt-1 font-semibold"><dt>Total</dt><dd className="tabular-nums">{formatCurrency(order.total)}</dd></div>
           </dl>
-          {order.trackingNumber && (
+          {(order.trackingNumber || order.carrier) && (
             <p className="mt-4 text-sm text-muted-foreground">
-              Shipped via {order.carrier ?? 'carrier'} · tracking <span className="font-mono">{order.trackingNumber}</span>
+              Shipped via {order.carrier ?? 'carrier'}
+              {order.trackingNumber && (
+                <>
+                  {' '}· tracking <span className="font-mono">{order.trackingNumber}</span>
+                </>
+              )}
             </p>
           )}
         </CardContent>
